@@ -1,0 +1,9 @@
+apiVersion: ops.example.com/v1
+kind: SimpleWeb
+metadata:
+  name: test-app
+  namespace: default
+spec:
+  image: nginx:latest
+  port: 80
+  replicas: 2

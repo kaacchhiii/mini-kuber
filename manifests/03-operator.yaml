@@ -1,0 +1,62 @@
+---
+# Deployment for the operator itself
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simpleweb-operator
+  namespace: default
+  labels:
+    app: simpleweb-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: simpleweb-operator
+  template:
+    metadata:
+      labels:
+        app: simpleweb-operator
+    spec:
+      serviceAccountName: simpleweb-operator
+      containers:
+        - name: operator
+          image: simpleweb-operator:latest
+          imagePullPolicy: Never # Use 'IfNotPresent' for remote registries
+          env:
+            # Optional: Set log level
+            - name: LOG_LEVEL
+              value: "INFO"
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+          # Liveness probe (kopf is healthy if the process is running)
+          livenessProbe:
+            exec:
+              command:
+                - python
+                - -c
+                - "import sys; sys.exit(0)"
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+          # Readiness probe
+          readinessProbe:
+            exec:
+              command:
+                - python
+                - -c
+                - "import sys; sys.exit(0)"
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+      # Security context
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000

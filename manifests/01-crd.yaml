@@ -1,0 +1,58 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: simplewebs.ops.example.com
+spec:
+  group: ops.example.com
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              required:
+                - image
+                - port
+                - replicas
+              properties:
+                image:
+                  type: string
+                  description: "Container image to deploy"
+                port:
+                  type: integer
+                  description: "Container port to expose"
+                  minimum: 1
+                  maximum: 65535
+                replicas:
+                  type: integer
+                  description: "Number of pod replicas"
+                  minimum: 1
+            status:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+      subresources:
+        status: {}
+      additionalPrinterColumns:
+        - name: Image
+          type: string
+          jsonPath: .spec.image
+        - name: Port
+          type: integer
+          jsonPath: .spec.port
+        - name: Replicas
+          type: integer
+          jsonPath: .spec.replicas
+        - name: Age
+          type: date
+          jsonPath: .metadata.creationTimestamp
+  scope: Namespaced
+  names:
+    plural: simplewebs
+    singular: simpleweb
+    kind: SimpleWeb
+    shortNames:
+      - sw
