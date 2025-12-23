@@ -1,5 +1,4 @@
 ---
-# Deployment for the operator itself
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -20,10 +19,9 @@ spec:
       serviceAccountName: simpleweb-operator
       containers:
         - name: operator
-          image: simpleweb-operator:latest
-          imagePullPolicy: Never # Use 'IfNotPresent' for remote registries
+          image: simpleweb-operator:v2
+          imagePullPolicy: Never
           env:
-            # Optional: Set log level
             - name: LOG_LEVEL
               value: "INFO"
           resources:
@@ -33,7 +31,6 @@ spec:
             limits:
               memory: "256Mi"
               cpu: "200m"
-          # Liveness probe (kopf is healthy if the process is running)
           livenessProbe:
             exec:
               command:
@@ -44,7 +41,6 @@ spec:
             periodSeconds: 20
             timeoutSeconds: 5
             failureThreshold: 3
-          # Readiness probe
           readinessProbe:
             exec:
               command:
@@ -55,7 +51,6 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
-      # Security context
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
