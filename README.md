@@ -1,7 +1,5 @@
 # Kubernetes Operator with Kopf
 
-A production-ready Kubernetes Operator built with Python and `kopf` that manages `SimpleWeb` custom resources.
-
 ## Overview
 
 This operator automatically creates and manages Kubernetes Deployments and Services based on `SimpleWeb` custom resource definitions.
